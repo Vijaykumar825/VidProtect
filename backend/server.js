@@ -14,12 +14,20 @@ const userRoutes = require('./routes/users');
 const app = express();
 const server = http.createServer(app);
 
+// Allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'https://vid-protect-sn6l.vercel.app',
+  'https://vid-protect.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 // Initialize Socket.io with CORS
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production'
-      ? process.env.FRONTEND_URL
-      : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -33,9 +41,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
