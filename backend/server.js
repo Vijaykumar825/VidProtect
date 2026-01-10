@@ -24,10 +24,42 @@ const allowedOrigins = [
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
+// Dynamic CORS origin check to allow Vercel preview URLs
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow all Vercel preview URLs for this project
+    if (origin.includes('vijaykumars-projects') && origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+
+    // Allow any vid-protect vercel subdomain
+    if (origin.includes('vid-protect') && origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+};
+
 // Initialize Socket.io with CORS
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (origin.includes('vijaykumars-projects') && origin.includes('vercel.app')) return callback(null, true);
+      if (origin.includes('vid-protect') && origin.includes('vercel.app')) return callback(null, true);
+      callback(null, false);
+    },
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -40,10 +72,7 @@ app.set('io', io);
 connectDB();
 
 // Middleware
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
