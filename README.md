@@ -1,289 +1,178 @@
-# Pulse Video - Video Processing Platform
+# Pulse Video
 
-A comprehensive full-stack application for video upload, sensitivity processing, and streaming with real-time progress tracking.
+A comprehensive full-stack application for video upload, content sensitivity analysis, and streaming with real-time progress tracking.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)
-![React](https://img.shields.io/badge/react-18.x-blue.svg)
+## 🚀 Features
 
-## 🎬 Features
-
-### Core Functionality
-- **Video Upload** - Drag-and-drop video upload with progress tracking
-- **Sensitivity Analysis** - Automated content screening and classification (safe/flagged)
-- **Real-time Updates** - Live processing progress via Socket.io
+- **Video Upload & Management** - Upload videos with metadata handling
+- **Content Sensitivity Analysis** - Automated content screening (safe/flagged classification)
+- **Real-Time Updates** - Live processing progress via Socket.io
 - **Video Streaming** - HTTP range request support for seamless playback
-- **Multi-tenant Architecture** - User isolation with role-based access control
+- **Multi-Tenant Architecture** - User isolation and data segregation
+- **Role-Based Access Control** - Viewer, Editor, and Admin roles
 
-### User Roles
-| Role | Permissions |
-|------|-------------|
-| **Viewer** | View own videos, stream content |
-| **Editor** | Upload, edit, delete own videos |
-| **Admin** | Full system access, user management |
-
-## 🛠 Technology Stack
+## 🛠 Tech Stack
 
 ### Backend
-- Node.js + Express.js
-- MongoDB with Mongoose ODM
-- Socket.io for real-time communication
-- JWT authentication
-- Multer for file uploads
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Real-Time**: Socket.io
+- **Authentication**: JWT
+- **File Handling**: Multer
+- **Video Processing**: FFmpeg
 
 ### Frontend
-- React 18 with Vite
-- React Router for navigation
-- Socket.io-client
-- Axios for API requests
-- Modern CSS with CSS variables
+- **Build Tool**: Vite
+- **Framework**: React 18
+- **Routing**: React Router v6
+- **HTTP Client**: Axios
+- **Real-Time**: Socket.io Client
 
 ## 📁 Project Structure
 
 ```
 Pulse1/
 ├── backend/
-│   ├── config/
-│   │   └── db.js              # MongoDB connection
-│   ├── middleware/
-│   │   ├── auth.js            # JWT authentication
-│   │   └── rbac.js            # Role-based access control
-│   ├── models/
-│   │   ├── User.js            # User schema
-│   │   └── Video.js           # Video schema
-│   ├── routes/
-│   │   ├── auth.js            # Authentication routes
-│   │   ├── videos.js          # Video CRUD + streaming
-│   │   └── users.js           # Admin user management
-│   ├── services/
-│   │   └── sensitivityAnalysis.js  # Video processing
-│   ├── uploads/               # Video storage
-│   ├── server.js              # Express server
-│   ├── package.json
-│   └── .env
-│
-└── frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/
-    │   │   └── Layout/        # Header, Sidebar, Layout
-    │   ├── context/
-    │   │   ├── AuthContext.jsx
-    │   │   └── SocketContext.jsx
-    │   ├── pages/
-    │   │   ├── Login.jsx
-    │   │   ├── Register.jsx
-    │   │   ├── Dashboard.jsx
-    │   │   ├── VideoLibrary.jsx
-    │   │   ├── VideoUpload.jsx
-    │   │   ├── VideoDetail.jsx
-    │   │   └── AdminUsers.jsx
-    │   ├── services/
-    │   │   └── api.js         # Axios configuration
-    │   ├── styles/
-    │   │   └── index.css      # Global styles
-    │   ├── App.jsx
-    │   └── main.jsx
-    ├── package.json
-    └── vite.config.js
+│   ├── config/          # Database configuration
+│   ├── controllers/     # Route controllers
+│   ├── middleware/      # Auth & RBAC middleware
+│   ├── models/          # Mongoose models
+│   ├── routes/          # API routes
+│   ├── services/        # Business logic (sensitivity analysis)
+│   ├── utils/           # Helper utilities
+│   ├── validators/      # Input validators
+│   ├── tests/           # Test files
+│   └── uploads/         # Video storage
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # Reusable UI components
+│   │   ├── context/     # React Context (Auth, Socket)
+│   │   ├── hooks/       # Custom React hooks
+│   │   ├── pages/       # Page components
+│   │   ├── services/    # API service layer
+│   │   ├── utils/       # Utility functions
+│   │   └── constants/   # App constants
+│   └── public/          # Static assets
+└── docs/                # Documentation
 ```
 
-## 🚀 Quick Start
+## ⚙️ Installation
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- MongoDB Atlas account (or local MongoDB)
+- Node.js (v18 or later)
+- MongoDB (local or Atlas)
+- FFmpeg (for video processing)
 
-### Installation
+### Backend Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Pulse1
-   ```
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Edit .env with your configuration
+npm run dev
+```
 
-2. **Install backend dependencies**
-   ```bash
-   cd backend
-   npm install
-   ```
+### Frontend Setup
 
-3. **Install frontend dependencies**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# Edit .env with your configuration
+npm run dev
+```
 
-4. **Configure environment variables**
+## 🔧 Environment Variables
 
-   Backend `.env` is already configured with:
-   ```env
-   PORT=5000
-   MONGODB_URI=<your-mongodb-uri>
-   JWT_SECRET=<your-jwt-secret>
-   JWT_EXPIRE=7d
-   MAX_FILE_SIZE=100000000
-   NODE_ENV=development
-   ```
+### Backend (.env)
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/pulse-video
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRE=7d
+MAX_FILE_SIZE=104857600
+FRONTEND_URL=http://localhost:5173
+NODE_ENV=development
+```
 
-5. **Start the development servers**
+### Frontend (.env)
+```env
+VITE_API_URL=http://localhost:5000
+VITE_SOCKET_URL=http://localhost:5000
+```
 
-   Backend (Terminal 1):
-   ```bash
-   cd backend
-   npm run dev
-   ```
-
-   Frontend (Terminal 2):
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-6. **Open the application**
-   
-   Navigate to `http://localhost:5173` in your browser.
-
-## 📖 API Documentation
+## 📡 API Endpoints
 
 ### Authentication
-
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login user |
+| POST | `/api/auth/login` | User login |
 | GET | `/api/auth/me` | Get current user |
 
 ### Videos
-
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| POST | `/api/videos/upload` | Upload video |
 | GET | `/api/videos` | List user's videos |
 | GET | `/api/videos/:id` | Get video details |
-| POST | `/api/videos/upload` | Upload video |
+| GET | `/api/videos/:id/stream` | Stream video |
 | PUT | `/api/videos/:id` | Update video |
 | DELETE | `/api/videos/:id` | Delete video |
-| GET | `/api/videos/:id/stream` | Stream video |
-| GET | `/api/videos/stats/summary` | Get statistics |
 
-### Users (Admin only)
-
+### Users (Admin)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/users` | List all users |
 | PUT | `/api/users/:id/role` | Update user role |
 | DELETE | `/api/users/:id` | Delete user |
 
-## 🔌 Socket.io Events
+## 👥 User Roles
 
-### Client → Server
-- `join` - Join user's room for targeted events
-- `leave` - Leave user's room
+| Role | Permissions |
+|------|-------------|
+| **Viewer** | View assigned videos only |
+| **Editor** | Upload, edit, delete own videos |
+| **Admin** | Full system access + user management |
 
-### Server → Client
-- `upload:progress` - Upload progress updates
-- `processing:start` - Processing started
-- `processing:progress` - Processing progress with stage info
-- `processing:complete` - Processing finished with results
-- `processing:error` - Processing failed
+## 🎬 Workflow
 
-## 🎨 User Interface
-
-### Dashboard
-- Statistics overview (total videos, safe/flagged counts, storage used)
-- Real-time processing status
-- Recent video list
-
-### Video Library
-- Grid view of all videos
-- Filter by status (safe, flagged, processing)
-- Real-time progress indicators
-- Delete functionality
-
-### Video Upload
-- Drag-and-drop file selection
-- File validation (type, size)
-- Upload progress bar
-- Auto-title from filename
-
-### Video Detail
-- Video player with native controls
-- Processing status display
-- Sensitivity analysis results
-- Edit title/description
-- Delete video
-
-### Admin Panel
-- User management table
-- Role modification
-- User statistics
-- Search and filter
-
-## 🔐 Security Features
-
-- JWT token-based authentication
-- Password hashing with bcrypt
-- Role-based access control (RBAC)
-- File type validation
-- File size limits
-- CORS protection
-
-## 📝 Design Decisions
-
-1. **Simulated Sensitivity Analysis**: The sensitivity analysis is simulated for demonstration purposes. In production, integrate with actual content moderation APIs (Google Cloud Video Intelligence, AWS Rekognition, Azure Video Analyzer).
-
-2. **Local File Storage**: Videos are stored locally in the `uploads` directory. For production, use cloud storage (AWS S3, Google Cloud Storage).
-
-3. **Real-time Updates**: Socket.io provides instant feedback during video processing. Each user receives only their own processing events via room-based targeting.
-
-4. **Progressive Video Loading**: HTTP range requests enable efficient video streaming and seeking without downloading the entire file.
+1. **Register/Login** - Create account or sign in
+2. **Upload Video** - Select file, add title & description
+3. **Processing** - Real-time progress updates during analysis
+4. **Review** - View classification (safe/flagged)
+5. **Stream** - Watch processed videos
+6. **Manage** - Edit or delete your content
 
 ## 🧪 Testing
 
-### Manual Testing
+```bash
+cd backend
+npm test
+```
 
-1. **Registration/Login Flow**
-   - Register a new user
-   - Login with credentials
-   - Verify JWT token storage
+## 🚀 Deployment
 
-2. **Video Upload Flow**
-   - Upload a video file
-   - Observe real-time progress
-   - View processing completion
+### Backend (Render)
+1. Create a new Web Service on Render
+2. Connect your GitHub repository
+3. Set environment variables
+4. Deploy
 
-3. **Video Streaming**
-   - Navigate to video detail
-   - Play video
-   - Test seeking functionality
+### Frontend (Vercel)
+1. Import project to Vercel
+2. Set `VITE_API_URL` to your backend URL
+3. Deploy
 
-4. **RBAC Testing**
-   - Create users with different roles
-   - Verify permission restrictions
+## 📚 Documentation
 
-## 📦 Deployment
-
-### Backend Deployment (Render/Railway/Heroku)
-
-1. Set environment variables
-2. Deploy from Git repository
-3. Ensure MongoDB Atlas is configured
-
-### Frontend Deployment (Vercel/Netlify)
-
-1. Update `VITE_API_URL` to point to deployed backend
-2. Deploy from Git repository
-3. Configure SPA routing
+- [API Documentation](docs/API.md)
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [User Manual](docs/USER_MANUAL.md)
+- [Design Decisions](docs/ASSUMPTIONS.md)
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-Built with ❤️ using Node.js, React, and MongoDB
+MIT License
