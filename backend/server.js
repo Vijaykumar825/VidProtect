@@ -19,46 +19,42 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
-  'https://vid-protect-sn6l.vercel.app',
   'https://vid-protect.vercel.app',
+  'https://vid-protect-sn6l.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
-// Dynamic CORS origin check to allow Vercel preview URLs
+// CORS options - allows all Vercel preview URLs
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Postman, etc.)
     if (!origin) return callback(null, true);
 
-    // Check if origin is in allowed list
+    // Allow known origins
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    // Allow all Vercel preview URLs for this project
-    if (origin.includes('vijaykumars-projects') && origin.includes('vercel.app')) {
+    // Allow all Vercel preview URLs
+    if (origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
 
-    // Allow any vid-protect vercel subdomain
-    if (origin.includes('vid-protect') && origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-
-    callback(new Error('Not allowed by CORS'));
+    return callback(null, false);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Initialize Socket.io with CORS
 const io = new Server(server, {
   cors: {
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
-      if (origin.includes('vijaykumars-projects') && origin.includes('vercel.app')) return callback(null, true);
-      if (origin.includes('vid-protect') && origin.includes('vercel.app')) return callback(null, true);
-      callback(null, false);
+      if (origin.endsWith('.vercel.app')) return callback(null, true);
+      return callback(null, false);
     },
     methods: ['GET', 'POST'],
     credentials: true
